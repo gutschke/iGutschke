@@ -1,5 +1,8 @@
 #!/bin/bash -e
 
+# Really simple-minded proxy. This code should probably re-implemented in a
+# more appropriate language.
+
 # Sanity check. This stops the CGI script from accidentally being used by
 # HTML code (as opposed to Javascript).
 [ "${HTTP_X_IGUTSCHKE}" = "1" ] || { echo; exit 0; }
