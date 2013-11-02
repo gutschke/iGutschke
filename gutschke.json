@@ -1,0 +1,11 @@
+[
+  [ "Financial Times", "rss.js", null, [ "ft.com", "world/europe", 8 ] ],
+  [ "Zeit ONLINE: Reisen", "rss.js", null, [ "zeit.de", "reisen", 8 ] ],
+null,
+  [ "Schlagzeilen - Google News", "rss.js", null, [ "news.google.com", "ned=de&hl=de", 8 ] ],
+  [ "Reuters: Top News", "rss.js", null, [ "reuters.de", "78/5378", 8 ] ],
+  [ "Spiegel ONLINE: Schlagzeilen", "rss.js", null, [ "spiegel.de", "schlagzeilen/tops", 8 ] ],
+null,
+  [ "tagesschau.de", "rss.js", null, [ "tagesschau.de", " ", 8 ] ],
+  [ "Focus ONLINE: News", "rss.js", null, [ "focus.de", "c/32191/f/443312", 8 ] ]
+]

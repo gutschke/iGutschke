@@ -1,0 +1,98 @@
+body {
+  margin:           0px;
+  background-color: #000000;
+}
+
+#igutschke { 
+  font-family:  Sans-Serif;
+  font-size:    smaller;
+  table-layout: fixed;
+}
+
+#igutschke tr {
+  vertical-align: top;
+}
+
+#igutschke td * {
+  background-color: #FFFFFF;
+}
+
+#igutschke a {
+  text-decoration: none;
+}
+
+#igutschke a:hover {
+  text-decoration: underline;
+}
+
+#igutschke .stock .up, #igutschke .nasdaq .up {
+  color: green;
+}
+
+#igutschke .stock .down, #igutschke .nasdaq .down {
+  color: red;
+}
+
+#igutschke .rss a.toggle {
+  font-size:   x-small;
+  font-family: monospace;
+}
+
+#igutschke .rss a.toggle:hover {
+  text-decoration: none;
+}
+
+#igutschke .rss .collapsed:after {
+  content: "\0025BA";
+}
+
+#igutschke .rss .collapsed:hover:after {
+  content: "\0025BB";
+}
+
+#igutschke .rss .expanded:after {
+  content: "\0025BC";
+}
+
+#igutschke .rss .expanded:hover:after {
+  content: "\0025BD";
+}
+
+#igutschke .gadget {
+  margin:  3ex;
+  border:  1px solid #DDDDDD;
+  padding: 0px;
+}
+
+#igutschke .gadget > *:first-child, #igutschke .gadget > *:first-child * { 
+  color:            #000000;
+  background-color: #DDDDDD;
+  font-weight:      bold;
+}
+
+#igutschke .gadget > * {
+  padding: 0.5ex;
+}
+
+#igutschke .rss .container > div > a:first-child {
+  position:     absolute;
+  padding-left: 0px;
+}
+
+#igutschke .rss .container > div > *:nth-child(2) {
+  display: inline-block;
+}
+
+#igutschke .rss .container > div > * {
+  padding-left: 2ex;
+}
+
+#igutschke .rss .preview {
+  display:        none;
+  padding-bottom: 1ex;
+}
+
+#igutschke .rss .container > div {
+  padding-top:    0.2ex;
+  padding-bottom: 0.2ex;
+}

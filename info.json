@@ -1,0 +1,18 @@
+[
+  [ "Stock Market", "nasdaq.js", null, [ [ "AAPL", "Apple Inc" ], [ "AMZN", "Amazon.com Inc" ], [ "FB", "Facebook Inc" ], ["GOOG", "Google Inc" ] ] ],
+  [ "Slashdot", "rss.js", null,
+    [ "slashdot.org", "Slashdot/slashdot", 7, "function(s) { return s.replace(/<p>.*$/g, ''); }" ]
+  ],
+  [ "heise online News", "rss.js", null,
+    [ "heise.de/newsticker/classic", "heise-atom.xml", 9, "function(s) { return s.replace(/<img.*$/, ''); }" ] ],
+  [ "LWN.net", "rss.js", null, [ "lwn.net", "headlines", 5 ] ],
+  [ "reddit: the front page of the Internet", "rss.js", null, [ "reddit.com", ".rss", 8 ] ],
+  [ "RISKS Digest", "rss.js", null, [ "catless.ncl.ac.uk/Risks", " ", 3 ] ],
+  null,
+  [ "Top Stories - Google News", "rss.js", null, [ "news.google.com", "ned=us&hl=en&topic=h", 6 ] ],
+  [ "tagesschau.de", "rss.js", null, [ "tagesschau.de", " ", 9 ] ],
+  [ "Bay Area News", "rss.js", null, [ "sfgate.com", "bayarea/feed/Bay-Area-News-429.php", 8 ] ],
+  [ "Business", "rss.js", null, [ "news.google.com", "ned=us&hl=en&topic=b", 4 ] ],
+  [ "Technology", "rss.js", null, [ "news.google.com", "ned=us&hl=en&topic=t", 4 ] ],
+  [ "Health", "rss.js", null, [ "news.google.com", "ned=us&hl=en&topic=m", 3 ] ]
+]
