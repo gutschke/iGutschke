@@ -78,9 +78,9 @@ var nasdaq = function(container, json) {
                   continue;
                 }
                 percent = iGutschke.quoteHTML(
-                change.replace(/^([-+]?).*/, '$1') +
-                (percent+'00').replace(/[^-+0-9.]*[-+]?([0-9]*[.][0-9][0-9]).*/,
-                                       '$1'));
+                  change.replace(/^([-+]?).*/, '$1') +
+                  (percent.replace(/[^0-9.]*/g, '') + '00').
+                      replace(/([0-9]*[.][0-9][0-9]).*/, '$1'));
 
                 // Compute table row with all the data that we want to display.
                 // Make sure everything is quoted appropriately.
