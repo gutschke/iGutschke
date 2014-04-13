@@ -187,8 +187,8 @@ iGutschke = function() {
         '/': '&#47;'
       };
       return function(s) {
-        return s.replace(/[&<>"'\/]/g, //"
-                         function(c) { return map[c]; });
+        return s ? s.replace(/[&<>"'\/]/g, //"
+                             function(c) { return map[c]; }) : '';
       };
     }(),
   

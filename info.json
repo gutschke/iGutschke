@@ -1,5 +1,5 @@
 [
-  [ "Stock Market", "nasdaq.js", null, [ [ "AAPL", "Apple Inc" ], [ "AMZN", "Amazon.com Inc" ], [ "FB", "Facebook Inc" ], ["GOOG", "Google Inc" ] ] ],
+  [ "Stock Market", "stock.js", null, [ [ "AAPL", "Apple Inc" ], [ "AMZN", "Amazon.com Inc" ], [ "FB", "Facebook Inc" ], ["GOOG", "Google Inc" ] ] ],
   [ "Slashdot", "rss.js", null,
     [ "slashdot.org", "Slashdot/slashdot", 7, "function(s) { return s.replace(/<p>.*$/g, ''); }" ]
   ],

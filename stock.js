@@ -4,30 +4,34 @@ var stock = function(container, json) {
       iGutschke.submitXMLRequest(
           // Submit a proxy request for the stock quote(s) in XML form.
           'nph-proxy.cgi?req=stock&s=' +
-            encodeURIComponent('stock=' + json[3].join('&stock=')),
+            json[3].map(function(x) { return x[0].replace(/[^-.0-9a-zA-Z]/g,''); }).join(','),
     
           function(request) {
-            // Retrieve all the "finance" tags, describing the different quotes.
-            var xml = request.responseXML.getElementsByTagName('finance');
+            // Retrieve all the "row" tags, describing the different quotes.
+            var xml = request.responseXML.getElementsByTagName('row');
     
-            // Retrieve XML values from the current "finance" tag, and escape
+            // Retrieve XML values from the current "row" tag, and escape
             // all special characters.
             var data = function(tag) {
               return iGutschke.quoteHTML(xml[i].getElementsByTagName(tag)[0].
-                                         getAttribute('data'));
+                                         textContent);
             };
     
-            // Iterate over all "finance" tags and generate HTML for the content.
+            // Iterate over all "row" tags and generate HTML for the content.
             var html = '<table width="100%">';
             for (var i = 0; i < xml.length; ++i) {
               try {
                 var change = data('change');
-                html += '<tr><td><a href="http://google.com/' +
-                        data('symbol_lookup_url') + '" title="' + data('company') +
+                var nChange = parseFloat(change);
+                var nPrice = parseFloat(data('price')).toFixed(2);
+                var percChange = nPrice != 0 ? (100.0*nChange/nPrice).toFixed(2) : 0;
+                html += '<tr><td><a href="http://google.com/finance?q=' +
+                        encodeURIComponent(json[3][i][0]) + '" title="' +
+                        iGutschke.quoteHTML(json[3][i][1]) +
                         '">' + data('symbol') + '</a></td><td align="right">' +
-                        data('last') + '</td><td align="right" class="' +
-                        (change.indexOf('+') == 0 ? 'up' : 'down') + '">' +
-                        change + '&nbsp;(' + data('perc_change') + '%)</td></tr>';
+                        data('price') + '</td><td align="right" class="' +
+                        (nChange >= 0 ? 'up' : 'down') + '">' + nChange + '&nbsp;(' +
+                        percChange + '%)</td></tr>';
               } catch (e) {
               }
             }
