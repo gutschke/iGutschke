@@ -4,7 +4,9 @@ var stock = function(container, json) {
       iGutschke.submitXMLRequest(
           // Submit a proxy request for the stock quote(s) in XML form.
           'nph-proxy.cgi?req=stock&s=' +
-            json[3].map(function(x) { return x[0].replace(/[^-.0-9a-zA-Z]/g,''); }).join(','),
+            json[3].map(function(x) {
+                          return x[0].replace(/[^-.0-9a-zA-Z]/g,''); })
+                   .join(','),
     
           function(request) {
             // Retrieve all the "row" tags, describing the different quotes.
@@ -21,17 +23,17 @@ var stock = function(container, json) {
             var html = '<table width="100%">';
             for (var i = 0; i < xml.length; ++i) {
               try {
-                var change = data('change');
-                var nChange = parseFloat(change);
-                var nPrice = parseFloat(data('price')).toFixed(2);
-                var percChange = nPrice != 0 ? (100.0*nChange/nPrice).toFixed(2) : 0;
+                var change = parseFloat(data('change')).toFixed(2);
+                var price  = parseFloat(data('price' )).toFixed(2);
+                var percChange = price && price != 'NaN' && change != 'NaN'
+                               ? (100.0*change/price).toFixed(2) : 0;
                 html += '<tr><td><a href="http://google.com/finance?q=' +
                         encodeURIComponent(json[3][i][0]) + '" title="' +
                         iGutschke.quoteHTML(json[3][i][1]) +
                         '">' + data('symbol') + '</a></td><td align="right">' +
-                        data('price') + '</td><td align="right" class="' +
-                        (nChange >= 0 ? 'up' : 'down') + '">' + nChange + '&nbsp;(' +
-                        percChange + '%)</td></tr>';
+                        price + '</td><td align="right" class="' +
+                        (change >= 0 ? 'up' : 'down') + '">' + change +
+                        '&nbsp;(' + percChange + '%)</td></tr>';
               } catch (e) {
               }
             }
