@@ -1,0 +1,118 @@
+# lua_shared_dict igutschke 16k;
+# init_by_lua '
+#   local handle, msg, err = io.open("/dev/urandom", "r")
+#   ngx.shared.igutschke:set("secret", ngx.encode_base64(ngx.sha1_bin(handle:read(32))))
+#   handle:close()';
+
+location /igutschke {
+  root /usr/local/openresty/nginx;
+  rewrite ^/igutschke$ /igutschke/ permanent;
+  rewrite ^/igutschke/$ /igutschke/index.html last;
+  location = /igutschke/nph-proxy.cgi {
+    content_by_lua '
+      local req, url, link, content_type
+      if ngx.req.get_headers()["X-iGutschke"] then
+        ngx.req.read_body()
+        local args = ngx.req.get_uri_args()
+        local handle, msg, err = io.open("/etc/igutschke-proxy.conf")
+        if not handle then return end
+        for line in handle:lines() do
+          req, url, link, content_type = line:match("([^#]*).*"):
+                                              match("^%s*([^%s]*)%s+([^%s]*)%s*([^%s]*)%s*([^%s]*).*$")
+          if req == ngx.unescape_uri(args["req"]) then
+            url = url:gsub("%%(.)", function(p)
+              if p == "s" then return args[p]
+              elseif p == "%" then return p
+              else return "%" .. p end
+              end)
+            break
+          else
+            url = nil
+          end
+        end
+        handle:close()
+      end
+      while url do
+        local u = ngx.encode_base64(url:match("([^?]*)")):
+                  gsub("[/+]", function(s) return ({["/"] = ":", ["+"] = "-"})[s] end)
+        local res = ngx.location.capture("/igutschke/redirect/" .. u,
+                                         { args = url:match("[?](.*)") })
+        if res.status == 301 or res.status == 302 then
+          url = res.header["Location"]
+        else
+          ngx.status = res.status
+          for k, v in pairs(res.header) do
+            if not (res.truncated or link) or
+               k:lower() ~= "content-length" then
+              ngx.header[k] = v
+            end
+          end
+          local body = res.body
+          if link then
+            body = ngx.re.gsub(body, "(\\"|&dquot;|&#34;)(https?://.*?)\\\\1",
+                               function(pattern)
+                                 if pattern[2]:match("^" .. link) then
+                                   local hash = ngx.encode_base64(ngx.hmac_sha1(
+                                     ngx.shared.igutschke:get("secret"),
+                                     pattern[2] .. req)):
+                                     gsub("[/+]", function(s) return ({["/"] = ":", ["+"] = "-"})[s] end)
+                                   local url = ngx.encode_base64(pattern[2]):
+                                     gsub("[/+]", function(s) return ({["/"] = ":", ["+"] = "-"})[s] end)
+                                   return pattern[1] ..
+                                          "/igutschke/secure/" .. hash .. "/" .. url ..
+                                          pattern[1]
+                                 else
+                                   return pattern[1] .. pattern[2] .. pattern[1]
+                                 end
+                               end)
+          end
+          ngx.print(body)
+          return ngx.exit(res.status)
+        end
+      end';
+  }
+  location ~ /igutschke/redirect/(.*) {
+    internal;
+    set $url $1;
+    rewrite_by_lua '
+      local url = ngx.var.url:gsub("[-:]", function(s) return ({[":"] = "/", ["-"] = "+"})[s] end)
+      ngx.var.url = ngx.decode_base64(url)';
+    proxy_pass_request_headers off;
+    proxy_pass $url?$args;
+  }
+  location ~ (/igutschke/secure/.*) {
+    set $url '$scheme://$host$1';
+    set $allowed_content_type '';
+    access_by_lua '
+      local base, hash, url = ngx.var.url:match("^(https?://[^/]*/igutschke/)secure/([^/]*)/(.*)")
+      url = url:gsub("[-:]", function(s) return ({[":"] = "/", ["-"] = "+"})[s] end)
+      url = ngx.decode_base64(url)
+      if ngx.req.get_headers()["Referer"] == base then
+        local handle, msg, err = io.open("/etc/igutschke-proxy.conf")
+        if not handle then return end
+        for line in handle:lines() do
+          local req, link, content_type = line:match("([^#]*).*"):
+                                               match("^%s*([^%s]*)%s+[^%s]*%s*([^%s]*)%s*([^%s]*).*$")
+          if link and link ~= "" and url:match("^" .. link) then
+            local check = ngx.encode_base64(ngx.hmac_sha1(
+              ngx.shared.igutschke:get("secret"),
+              url .. req)):gsub("[/+]", function(s) return ({["/"] = ":", ["+"] = "-"})[s] end)
+            if hash == check then
+              handle:close()
+              ngx.var.url = url
+              ngx.var.allowed_content_type = content_type
+              return
+            end
+          end
+        end
+        handle:close()
+      end
+      return ngx.exit(404)';
+    header_filter_by_lua '
+      if not ngx.header["Content-Type"]:match(ngx.var.allowed_content_type) then
+        return ngx.exit(500)
+      end';
+    proxy_pass_request_headers off;
+    proxy_pass $url;
+  }
+}
