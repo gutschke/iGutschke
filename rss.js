@@ -6,7 +6,7 @@ var rss = function(container, json) {
           'nph-proxy.cgi?req=rss:' + encodeURIComponent(json[3][0]) + '&s=' +
               encodeURIComponent(json[3][1]) + '&len=' +
               (json[3][4] ? encodeURIComponent(json[3][4]) : '64000'),
-    
+
           function(request) {
             if (!request || !(request.responseXML || request.response)) {
               return;
@@ -19,19 +19,19 @@ var rss = function(container, json) {
             } else {
               xml = iGutschke.domParser(request.response).getElementsByTagName('item');
             }
-    
+
             // Retrieve XML values from the current "item" tag, and escape
             // all special characters.
             var data = function(tag) {
               return iGutschke.quoteHTML(xml[i].getElementsByTagName(tag)[0].
                                          childNodes[0].nodeValue);
             };
-    
+
             // Optionally post-process the HTML content.
             if (json[3][3]) {
               var filter = eval('[' + json[3][3] + '][0]');
             }
-    
+
             // Retrieve XML values from the current "item" tag, and return
             // sanitized HTML.
             var text = function(tag) {
@@ -48,10 +48,10 @@ var rss = function(container, json) {
               if (filter) {
                 html = filter(html);
               }
-    
+
               return html;
             };
-    
+
             // Iterate over all "item" tags and generate HTML for the content.
             var collapsed = '<span class="collapsed"></span>';
             var expanded = '<span class="expanded"></span>';
@@ -65,17 +65,17 @@ var rss = function(container, json) {
               } catch (e) {
               }
             }
-    
+
             // Update the container with the new content.
             container.innerHTML = html;
-    
+
             // Remove iframes. They probably will be empty at this point, as the
             // sanitizer rewrote them.
             var iframes = container.getElementsByTagName('iframe');
             while (iframes[0]) {
               iframes[0].parentNode.removeChild(iframes[0]);
             }
-    
+
             // Set up handler to allow opening and closing content details.
             var toggles = container.getElementsByClassName('toggle');
             for (var i = 0; i < toggles.length; ++i) {
@@ -92,7 +92,7 @@ var rss = function(container, json) {
                           innerHTML = collapsed;
                     }
                   }
-    
+
                   // Toggle content details for item that was clicked.
                   if (preview.style.display === 'block') {
                     toggle.innerHTML = collapsed;
@@ -101,13 +101,13 @@ var rss = function(container, json) {
                     toggle.innerHTML = expanded;
                     preview.style.display = 'block';
                   }
-    
+
                   return false;
                 };
               }();
             }
           });
-    
+
       // Make the title of this gadget clickable.
       var title = container.parentNode.firstChild;
       if (title.getElementsByClassName('a').length === 0) {

@@ -45,7 +45,7 @@ iGutschke = function() {
           var fnc = window[script.replace(/(.*\/)*([^.]*)(\..*)?/, '$2')];
           cb(fnc);
         };
-  
+
         // Check whether we have already loaded or started to load this
         // plug-in.
         var callbacks = loadedScripts[script];
@@ -57,7 +57,7 @@ iGutschke = function() {
           var loaded = false;
           tag.setAttribute('type', 'text/javascript');
           tag.setAttribute('src', script);
-  
+
           // Set an event handler that fires once the plug-in has loaded.
           tag.onload = tag.onreadystatechange = function() {
             if (!loaded &&
@@ -66,7 +66,7 @@ iGutschke = function() {
                  this.readyState === 'complete')) {
               loaded = true;
               tag.onload = tag.onreadystatechange = null;
-  
+
               // Process all callbacks that have been waiting for this plug-in.
               for (var i = 0; i < callbacks.length; ++i) {
                 scriptLoaded(script, callbacks[i]);
@@ -87,7 +87,7 @@ iGutschke = function() {
           callbacks.push(cb);
         }
       };
-  
+
       // Handles expired timer events and schedules a new timer, if needed.
       var handleTimerEvents = function() {
         var timerId = undefined;
@@ -172,10 +172,10 @@ iGutschke = function() {
           td[i].setAttribute('width', width);
         }
       };
-  
+
       iGutschke.submitXMLRequest((query['info'] || 'info') + '.json', parseInfo);
     },
-  
+
     // Quotes a string so that it can safely be displayed as HTML.
     quoteHTML: function() {
       var map = {
@@ -191,7 +191,7 @@ iGutschke = function() {
                              function(c) { return map[c]; }) : '';
       };
     }(),
-  
+
     // Sends an XMLHttpRequest() request for an external resource. Typically
     // this would be a JSON file. Calls the callback once the resource has
     // loaded successfully.
@@ -212,7 +212,7 @@ iGutschke = function() {
       } catch (e) {
       }
     },
-  
+
     // Parse a string into an XML document object model.
     domParser: function() {
       if (window.DOMParser) {
@@ -231,8 +231,7 @@ iGutschke = function() {
         };
       }
     }(),
-  
-  
+
     // Computes, when the next timeout event should happen.
     nextTimeOut: function(now, inc) {
       if (inc === null) {

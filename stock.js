@@ -7,18 +7,18 @@ var stock = function(container, json) {
             json[3].map(function(x) {
                           return x[0].replace(/[^-.0-9a-zA-Z]/g,''); })
                    .join(','),
-    
+
           function(request) {
             // Retrieve all the "row" tags, describing the different quotes.
             var xml = request.responseXML.getElementsByTagName('row');
-    
+
             // Retrieve XML values from the current "row" tag, and escape
             // all special characters.
             var data = function(tag) {
               return iGutschke.quoteHTML(xml[i].getElementsByTagName(tag)[0].
                                          textContent);
             };
-    
+
             // Iterate over all "row" tags and generate HTML for the content.
             var html = '<table width="100%">';
             for (var i = 0; i < xml.length; ++i) {
@@ -37,7 +37,7 @@ var stock = function(container, json) {
               } catch (e) {
               }
             }
-    
+
             // Update the container with the new content.
             container.innerHTML = html + '</table>';
           });

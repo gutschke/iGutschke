@@ -8,6 +8,11 @@ location /igutschke {
   root /usr/local/openresty/nginx;
   rewrite ^/igutschke$ /igutschke/ permanent;
   rewrite ^/igutschke/$ /igutschke/index.html last;
+  header_filter_by_lua '
+      ngx.header["X-Frame-Options"] = "SAMEORIGIN"
+      ngx.header["X-Content-Type-Options"] = "nosniff"
+      ngx.header["X-XSS-Protection"] = "1; mode=block"';
+
   location = /igutschke/nph-proxy.cgi {
     content_by_lua '
       local req, url, link, content_type
@@ -77,6 +82,10 @@ location /igutschke {
     rewrite_by_lua '
       local url = ngx.var.url:gsub("[-:]", function(s) return ({[":"] = "/", ["-"] = "+"})[s] end)
       ngx.var.url = ngx.decode_base64(url)';
+    header_filter_by_lua '
+      ngx.header["X-Frame-Options"] = "SAMEORIGIN"
+      ngx.header["X-Content-Type-Options"] = "nosniff"
+      ngx.header["X-XSS-Protection"] = "1; mode=block"';
     proxy_pass_request_headers off;
     proxy_pass $url?$args;
   }
@@ -111,7 +120,10 @@ location /igutschke {
     header_filter_by_lua '
       if not ngx.header["Content-Type"]:match(ngx.var.allowed_content_type) then
         return ngx.exit(500)
-      end';
+      end
+      ngx.header["X-Frame-Options"] = "SAMEORIGIN"
+      ngx.header["X-Content-Type-Options"] = "nosniff"
+      ngx.header["X-XSS-Protection"] = "1; mode=block"';
     proxy_pass_request_headers off;
     proxy_pass $url;
   }

@@ -3,7 +3,7 @@ body {
   background-color: #000000;
 }
 
-#igutschke { 
+#igutschke {
   font-family:  Sans-Serif;
   font-size:    smaller;
   table-layout: fixed;
@@ -64,7 +64,7 @@ body {
   padding: 0px;
 }
 
-#igutschke .gadget > *:first-child, #igutschke .gadget > *:first-child * { 
+#igutschke .gadget > *:first-child, #igutschke .gadget > *:first-child * {
   color:            #000000;
   background-color: #DDDDDD;
   font-weight:      bold;
