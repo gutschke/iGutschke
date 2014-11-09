@@ -87,6 +87,8 @@ location /igutschke {
       ngx.header["X-Content-Type-Options"] = "nosniff"
       ngx.header["X-XSS-Protection"] = "1; mode=block"';
     proxy_pass_request_headers off;
+    proxy_ignore_headers X-Accel-Expires X-Accel-Redirect X-Accel-Limit-Rate X-Accel-Buffering Set-Cookie;
+    proxy_hide_header Set-Cookie;
     proxy_pass $url?$args;
   }
   location ~ (/igutschke/secure/.*) {
@@ -125,6 +127,8 @@ location /igutschke {
       ngx.header["X-Content-Type-Options"] = "nosniff"
       ngx.header["X-XSS-Protection"] = "1; mode=block"';
     proxy_pass_request_headers off;
+    proxy_ignore_headers X-Accel-Expires X-Accel-Redirect X-Accel-Limit-Rate X-Accel-Buffering Set-Cookie;
+    proxy_hide_header Set-Cookie;
     proxy_pass $url;
   }
 }
