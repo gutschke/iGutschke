@@ -37,9 +37,14 @@ var rss = function(container, json) {
             var text = function(tag) {
               // Sanitize HTML content.
               try {
-                var html = html_sanitize(
-                  xml[i].getElementsByTagName(tag)[0].childNodes[0].nodeValue,
-                  function(s) { return s; });
+                var nodes = xml[i].getElementsByTagName(tag)[0].childNodes[0];
+                var html = nodes.nodeValue || nodes.outerHTML;
+                if (html.indexOf("&lt;") === 0) {
+                  var d = document.createElement("div");
+                  d.innerHTML = html;
+                  html = d.childNodes.length === 0 ? "" : d.childNodes[0].nodeValue;
+                }
+                html = html_sanitize(html, function(s) { return s; });
               } catch (e) {
                 return '';
               }
