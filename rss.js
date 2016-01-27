@@ -16,6 +16,9 @@ var rss = function(container, json) {
             var xml;
             if (request.responseXML) {
               xml = request.responseXML.getElementsByTagName('item');
+              if (!xml || !xml.length) {
+                xml = request.responseXML.getElementsByTagName('entry');
+              }
             } else {
               xml = iGutschke.domParser(request.response).getElementsByTagName('item');
             }
@@ -23,8 +26,14 @@ var rss = function(container, json) {
             // Retrieve XML values from the current "item" tag, and escape
             // all special characters.
             var data = function(tag) {
-              return iGutschke.quoteHTML(xml[i].getElementsByTagName(tag)[0].
-                                         childNodes[0].nodeValue);
+              var node = xml[i].getElementsByTagName(tag)[0];
+              try {
+                if (tag === 'link') {
+                  return iGutschke.quoteHTML(node.attributes['href'].nodeValue);
+                }
+              } catch (e) {
+              }
+              return iGutschke.quoteHTML(node.childNodes[0].nodeValue);
             };
 
             // Optionally post-process the HTML content.
@@ -66,7 +75,8 @@ var rss = function(container, json) {
                 html += '<div><a class="toggle">' + collapsed + '</a>' +
                         '<a class="title" href="' + data('link') + '">' +
                         text('title') + '</a><div class="preview">' +
-                        (text('description') || text('title')) + '</div></div>';
+                        (text('description') || text('content') ||
+                         text('title')) + '</div></div>';
               } catch (e) {
               }
             }
