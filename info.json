@@ -1,7 +1,7 @@
 [
   [ "Stock Market", "stock.js", null, [ [ "AAPL", "Apple Inc" ], [ "AMZN", "Amazon.com Inc" ], [ "FB", "Facebook Inc" ], ["GOOG", "Google Inc" ] ] ],
   [ "Slashdot", "rss.js", null,
-    [ "slashdot.org", "Slashdot/slashdot", 7, "function(s) { return s.replace(/<p>.*$/g, ''); }" ]
+    [ "slashdot.org", "Slashdot/slashdot", 7, "function(s) { return s.replace(/<p>[\\s\\S]*/img, ''); }" ]
   ],
   [ "heise online News", "rss.js", null,
     [ "heise.de/newsticker/classic", "heise-atom.xml", 9, "function(s) { return s.replace(/<img.*$/, ''); }" ] ],
