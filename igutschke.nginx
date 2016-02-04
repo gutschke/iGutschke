@@ -54,9 +54,9 @@ location /igutschke {
           end
           local body = res.body
           if link then
-            body = ngx.re.gsub(body, "(\\"|&dquot;|&#34;)(https?://.*?)\\\\1",
+            body = ngx.re.gsub(body, "(\\"|&d?quot;|&#34;)((https?:)?//((?!\\\\1).)*)\\\\1",
                                function(pattern)
-                                 if pattern[2]:match("^" .. link) then
+                                 if ngx.re.match(pattern[2], "^(" .. link .. ")", "oji") then
                                    local hash = ngx.encode_base64(ngx.hmac_sha1(
                                      ngx.shared.igutschke:get("secret"),
                                      pattern[2] .. req)):
@@ -69,7 +69,7 @@ location /igutschke {
                                  else
                                    return pattern[1] .. pattern[2] .. pattern[1]
                                  end
-                               end)
+                               end, "oj")
           end
           ngx.print(body)
           return ngx.exit(res.status)
@@ -104,14 +104,17 @@ location /igutschke {
         for line in handle:lines() do
           local req, link, content_type = line:match("([^#]*).*"):
                                                match("^%s*([^%s]*)%s+[^%s]*%s*([^%s]*)%s*([^%s]*).*$")
-          if link and link ~= "" and url:match("^" .. link) then
+          if link and link ~= "" and ngx.re.match(url, "^(" .. link .. ")", "oji") then
             local check = ngx.encode_base64(ngx.hmac_sha1(
               ngx.shared.igutschke:get("secret"),
               url .. req)):gsub("[/+]", function(s) return ({["/"] = ":", ["+"] = "-"})[s] end)
             if hash == check then
               handle:close()
+              if ngx.re.match(url, "^//") then url = "https:" .. url; end
               ngx.var.url = url
-              ngx.var.allowed_content_type = content_type
+              if content_type then
+                ngx.var.allowed_content_type = content_type
+              end
               return
             end
           end
@@ -120,7 +123,7 @@ location /igutschke {
       end
       return ngx.exit(404)';
     header_filter_by_lua '
-      if not ngx.header["Content-Type"]:match(ngx.var.allowed_content_type) then
+      if ngx.var.allowed_content_type and not ngx.header["Content-Type"]:match(ngx.var.allowed_content_type) then
         return ngx.exit(500)
       end
       ngx.header["X-Frame-Options"] = "SAMEORIGIN"
